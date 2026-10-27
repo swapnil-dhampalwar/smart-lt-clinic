@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SMART Liver Transplant Clinic — Long-Term Metabolic Health OPD</title>
+<style>
+:root{
+  --navy:#14274E; --navy2:#1E3A66; --teal:#1C7293; --amber:#E08A2B; --crimson:#B3332B;
+  --green:#2E7D5B; --ice:#EEF3FB; --ice2:#E2EAF6; --ink:#1B2430; --grey:#6A7686;
+  --line:#D5DEEC; --white:#fff;
+  --red-bg:#FBEAE8; --amber-bg:#FBF1E1; --green-bg:#E6F2EC; --teal-bg:#E4F0F4;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Calibri,Arial,sans-serif;color:var(--ink);background:#F4F7FC;font-size:14px;line-height:1.45}
+h1,h2,h3{font-family:Cambria,Georgia,serif;margin:0}
+button{font-family:inherit;cursor:pointer}
+input,select{font-family:inherit;font-size:13px}
+
+/* Top bar */
+.topbar{background:var(--navy);color:#fff;padding:12px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:0 2px 8px rgba(0,0,0,.15);position:sticky;top:0;z-index:50}
+.brand{display:flex;align-items:center;gap:12px}
+.brand .mark{width:40px;height:40px;border-radius:9px;background:var(--crimson);display:flex;align-items:center;justify-content:center;font-size:22px}
+.brand h1{font-size:19px;line-height:1.05}
+.brand .sub{font-size:11px;color:#AFC1DE;letter-spacing:.4px;text-transform:uppercase}
+.pt-chip{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.chip{background:var(--navy2);border:1px solid #33507f;border-radius:20px;padding:5px 13px;font-size:12px;color:#DCE6F5}
+.chip b{color:#fff}
+.tbtns{display:flex;gap:7px;flex-wrap:wrap}
+.tbtns button{background:#26426e;color:#fff;border:1px solid #3a5b8c;border-radius:7px;padding:7px 11px;font-size:12px}
+.tbtns button:hover{background:#31558a}
+.tbtns button.primary{background:var(--crimson);border-color:var(--crimson)}
+.tbtns button.primary:hover{background:#c9433a}
+
+/* Layout */
+.wrap{display:grid;grid-template-columns:minmax(420px,1fr) minmax(440px,1.05fr);gap:18px;padding:18px 22px;max-width:1500px;margin:0 auto}
+@media(max-width:1050px){.wrap{grid-template-columns:1fr}}
+.col h2.sec{font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--crimson);font-family:-apple-system,Calibri,sans-serif;font-weight:700;margin:2px 0 10px}
+
+/* Accordion cards */
+.acc{background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:12px;overflow:hidden;box-shadow:0 1px 3px rgba(20,39,78,.05)}
+.acc>summary{list-style:none;cursor:pointer;padding:13px 16px;display:flex;align-items:center;gap:11px;font-weight:600;color:var(--navy);font-size:14px;user-select:none}
+.acc>summary::-webkit-details-marker{display:none}
+.acc>summary .ico{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;flex-shrink:0}
+.acc>summary .caret{margin-left:auto;color:var(--grey);transition:transform .2s;font-size:12px}
+.acc[open]>summary .caret{transform:rotate(90deg)}
+.acc .body{padding:6px 16px 16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 12px}
+.fld{display:flex;flex-direction:column;gap:3px}
+.fld label{font-size:11px;color:var(--grey);font-weight:600;letter-spacing:.2px}
+.fld input,.fld select{padding:7px 8px;border:1px solid var(--line);border-radius:6px;background:#fff}
+.fld input:focus,.fld select:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 2px var(--teal-bg)}
+.fld .unit{font-size:10px;color:var(--grey)}
+.twin{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.twin .sm label{font-size:9.5px}
+.hint{font-size:10.5px;color:var(--grey);margin:2px 0 8px}
+.subhdr{font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.5px;margin:12px 0 6px;border-top:1px dashed var(--line);padding-top:10px}
+.subhdr:first-child{border-top:none;padding-top:0;margin-top:2px}
+
+/* Snapshot */
+.snap{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(20,39,78,.05);margin-bottom:14px}
+.composite{display:flex;align-items:center;gap:16px;background:var(--navy);color:#fff;border-radius:12px;padding:16px 18px;margin-bottom:14px}
+.gauge{width:78px;height:78px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;flex-direction:column;font-family:Cambria,serif}
+.gauge .n{font-size:26px;font-weight:700;line-height:1}
+.gauge .l{font-size:8.5px;letter-spacing:.5px;text-transform:uppercase;opacity:.85}
+.composite .txt h3{font-size:18px;margin-bottom:3px}
+.composite .txt p{margin:0;font-size:12.5px;color:#C9D6EA}
+.dom-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:520px){.dom-grid{grid-template-columns:1fr}}
+.dcard{border:1px solid var(--line);border-radius:10px;padding:11px 12px;position:relative;background:#fff}
+.dcard .top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.dcard .dot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+.dcard h4{font-size:13.5px;font-family:-apple-system,Calibri,sans-serif;font-weight:700;color:var(--navy)}
+.dcard .badge{margin-left:auto;font-size:9.5px;font-weight:700;padding:2px 8px;border-radius:11px;text-transform:uppercase;letter-spacing:.4px}
+.dcard .metrics{font-size:11.5px;color:var(--ink);line-height:1.5}
+.dcard .metrics .delta{font-weight:700;font-size:10.5px;padding:0 4px;border-radius:4px}
+.up{color:var(--crimson)} .down{color:var(--green)}
+.b-red{background:var(--red-bg);color:var(--crimson)} .b-amber{background:var(--amber-bg);color:#9a5c12}
+.b-green{background:var(--green-bg);color:var(--green)} .b-grey{background:#eceff4;color:var(--grey)}
+.d-red{background:var(--crimson)} .d-amber{background:var(--amber)} .d-green{background:var(--green)} .d-grey{background:#B7C0CD}
+
+/* Actions */
+.act-list{list-style:none;padding:0;margin:0}
+.act-list li{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--ice2)}
+.act-list li:last-child{border-bottom:none}
+.act-list .sev{width:6px;border-radius:4px;flex-shrink:0}
+.act-list .txt{flex:1}
+.act-list .txt .h{font-weight:600;font-size:12.5px}
+.act-list .txt .h .tag{font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;margin-right:6px;vertical-align:middle;text-transform:uppercase}
+.act-list .txt .c{font-size:11px;color:var(--grey);margin-top:2px}
+.act-list .txt .cite{font-size:10px;color:var(--teal);font-style:italic;margin-top:2px}
+.empty{color:var(--grey);font-size:12.5px;padding:8px 0;font-style:italic}
+
+/* Reminders */
+.rem{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:8px;margin-bottom:7px;font-size:12px;border:1px solid transparent}
+.rem.due{background:var(--red-bg);border-color:#f0c8c4}
+.rem.soon{background:var(--amber-bg);border-color:#eed6a8}
+.rem.ok{background:var(--green-bg);border-color:#c4e0d0}
+.rem .ic{font-size:15px}
+.rem .r-t{flex:1}
+.rem .r-t b{font-size:12.5px}
+.rem .r-s{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:2px 8px;border-radius:10px}
+.s-due{background:var(--crimson);color:#fff} .s-soon{background:var(--amber);color:#fff} .s-ok{background:var(--green);color:#fff}
+
+.foot{text-align:center;font-size:11px;color:var(--grey);padding:14px 22px 26px;line-height:1.6}
+.foot b{color:var(--navy)}
+.disclaim{max-width:1000px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:9px;padding:11px 15px;color:var(--grey);font-size:11px}
+
+/* ===== Integrated care platform ===== */
+.platform{max-width:1500px;margin:4px auto 0;padding:0 22px}
+.platform .pbar{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 3px rgba(20,39,78,.06);overflow:hidden}
+.phead{background:var(--navy);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.phead .pt{font-family:Cambria,Georgia,serif;font-size:16px;font-weight:700}
+.phead .psub{font-size:11px;color:#AFC1DE}
+.tabs{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.tabs button{background:#26426e;color:#cfe0ea;border:1px solid #3a5b8c;border-radius:8px;padding:7px 14px;font-size:12.5px;font-weight:600}
+.tabs button.on{background:var(--crimson);border-color:var(--crimson);color:#fff}
+.panel{display:none;padding:16px 18px}
+.panel.on{display:block}
+.pgrid{display:grid;grid-template-columns:1.35fr 1fr;gap:16px}
+@media(max-width:900px){.pgrid{grid-template-columns:1fr}}
+.pcard{background:var(--ice);border:1px solid var(--line);border-radius:11px;padding:13px}
+.pcard h4{font-family:-apple-system,Calibri,sans-serif;font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--navy);margin:0 0 9px}
+.btn{background:var(--teal);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12.5px;font-weight:600}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.btn.navy{background:var(--navy)}
+/* messaging */
+.thread{background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px;height:270px;overflow-y:auto;display:flex;flex-direction:column;gap:9px}
+.msg{max-width:82%;padding:8px 11px;border-radius:12px;font-size:12.5px;line-height:1.4;position:relative}
+.msg .who{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;opacity:.7;margin-bottom:2px}
+.msg.clin{align-self:flex-end;background:var(--teal-bg);border:1px solid #bcdbe4;border-bottom-right-radius:3px}
+.msg.pat{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:3px}
+.msg.urgent{border-color:var(--crimson);box-shadow:0 0 0 2px var(--red-bg)}
+.msg .flag{font-size:9.5px;font-weight:700;color:var(--crimson);text-transform:uppercase;letter-spacing:.3px;margin-top:3px}
+.msgbar{display:flex;gap:7px;margin-top:10px}
+.msgbar input{flex:1;padding:9px 11px;border:1px solid var(--line);border-radius:8px}
+.msgempty{color:var(--grey);font-size:12px;text-align:center;margin:auto}
+/* PROM */
+.prom-q{margin-bottom:11px}
+.prom-q .qt{font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:6px}
+.opts{display:flex;gap:6px;flex-wrap:wrap}
+.opts label{flex:1;min-width:70px;border:1px solid var(--line);border-radius:8px;padding:7px 6px;text-align:center;font-size:11px;background:#fff;cursor:pointer;color:var(--grey);transition:.12s}
+.opts label:has(input:checked){background:var(--navy);color:#fff;border-color:var(--navy);font-weight:600}
+.opts input{position:absolute;opacity:0;width:0;height:0}
+.promResult{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.wbgauge{width:74px;height:74px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;flex-shrink:0}
+.wbgauge b{font-size:24px;line-height:1} .wbgauge span{font-size:8.5px;text-transform:uppercase;letter-spacing:.4px;opacity:.9}
+.spark{display:flex;align-items:flex-end;gap:5px;height:56px}
+.spark .bar{width:15px;background:var(--teal);border-radius:3px 3px 0 0;position:relative}
+.spark .bar span{position:absolute;bottom:-15px;left:50%;transform:translateX(-50%);font-size:8.5px;color:var(--grey);white-space:nowrap}
+.promflag{font-size:11.5px;padding:6px 9px;border-radius:7px;margin-top:7px}
+/* scheduling */
+.suggest{background:var(--teal-bg);border:1px solid #bcdbe4;border-radius:9px;padding:10px 12px;font-size:12px;color:var(--navy);margin-bottom:11px}
+.appt{display:flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--line);border-radius:9px;padding:9px 11px;margin-bottom:8px}
+.appt .cal{width:44px;height:44px;border-radius:8px;background:var(--navy);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
+.appt .cal .mo{font-size:8.5px;text-transform:uppercase;letter-spacing:.4px} .appt .cal .dy{font-size:18px;font-weight:700;line-height:1}
+.appt .ainfo{flex:1} .appt .ainfo b{font-size:13px} .appt .ainfo .amode{font-size:11px;color:var(--grey)}
+.mode{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:3px 9px;border-radius:11px}
+.mode.tele{background:var(--green-bg);color:var(--green)} .mode.inp{background:var(--amber-bg);color:var(--amber)}
+.appt .del{background:none;border:none;color:var(--grey);font-size:16px;line-height:1}
+.appt.past{opacity:.55}
+.schedrow{display:grid;grid-template-columns:1.2fr 1fr 1fr auto;gap:8px;align-items:end;margin-top:4px}
+.schedrow .fld label{font-size:11px;color:var(--grey);font-weight:600}
+.schedrow input,.schedrow select{padding:8px;border:1px solid var(--line);border-radius:7px}
+.psmall{font-size:10.5px;color:var(--grey);margin-top:9px}
+
+@media print{
+  .topbar .tbtns,.col.left,.platform{display:none}
+  .wrap{grid-template-columns:1fr;padding:0}
+  body{background:#fff}
+  .snap,.dcard,.acc{box-shadow:none}
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="brand">
+    <div class="mark">&#128142;</div>
+    <div>
+      <h1>SMART Liver Transplant Clinic</h1>
+      <div class="sub">AI-assisted long-term metabolic health OPD</div>
+    </div>
+  </div>
+  <div class="pt-chip">
+    <span class="chip" id="chipName">No recipient loaded</span>
+    <span class="chip" id="chipPhase">&mdash;</span>
+    <div class="tbtns">
+      <button onclick="loadDemo()">Load demo case</button>
+      <button onclick="newCase()">New</button>
+      <button onclick="exportJSON()">Export</button>
+      <button onclick="document.getElementById('imp').click()">Import</button>
+      <button class="primary" onclick="window.print()">Print snapshot</button>
+      <input type="file" id="imp" accept="application/json" style="display:none" onchange="importJSON(event)">
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <!-- ============ LEFT: DATA ENTRY ============ -->
+  <div class="col left">
+    <h2 class="sec">Holistic assessment &amp; data entry</h2>
+
+    <details class="acc" open>
+      <summary><span class="ico" style="background:var(--navy)">&#128100;</span> Recipient &amp; transplant profile <span class="caret">&#9654;</span></summary>
+      <div class="body">
+        <div class="grid2">
+          <div class="fld"><label>Name / ID</label><input id="name" oninput="compute()"></div>
+          <div class="fld"><label>Age (yr)</label><input id="age" type="number" oninput="compute()"></div>
+          <div class="fld"><label>Sex</label><select id="sex" onchange="compute()"><option value="">—</option><option>Male</option><option>Female</option></select></div>
+          <div class="fld"><label>Date of transplant</label><input id="ltDate" type="date" oninput="compute()"></div>
+          <div class="fld"><label>Graft type</label><select id="graft" onchange="compute()"><option value="">—</option><option>LDLT</option><option>DDLT</option></select></div>
+          <div class="fld"><label>Indication for LT</label>
+            <select id="indication" onchange="compute()">
+              <option value="">—</option>
+              <option>MASH / MAFLD cirrhosis</option>
+              <option>Alcohol-related cirrhosis</option>
+              <option>HBV cirrhosis</option><option>HCV cirrhosis</option>
+              <option>Autoimmune / PBC / PSC</option>
+              <option>HCC</option><option>Acute liver failure</option>
+              <option>Cryptogenic cirrhosis</option><option>Other</option>
+            </select></div>
+        </div>
+        <div class="subhdr">Scores &mdash; before &amp; after transplant</div>
+        <div class="grid3">
+          <div class="fld"><label>MELD-Na (pre)</label><input id="meldPre" type="number" oninput="compute()"></div>
+          <div class="fld"><label>Diabetes pre-LT</label><select id="dmPre" onchange="compute()"><option value="">—</option><option>No</option><option>Yes</option></select></div>
+          <div class="fld"><label>CKD pre-LT</label><select id="ckdPre" onchange="compute()"><option value="">—</option><option>No</option><option>Yes</option></select></div>
+        </div>
+        <div class="subhdr">Immunosuppression (current)</div>
+        <div class="grid2">
+          <div class="fld"><label>Primary CNI</label><select id="cni" onchange="compute()"><option value="">—</option><option>Tacrolimus</option><option>Cyclosporine</option><option>CNI-free</option></select></div>
+          <div class="fld"><label>Adjuncts</label><select id="adjunct" onchange="compute()"><option value="">—</option><option>MMF</option><option>mTOR inhibitor</option><option>MMF + mTORi</option><option>None</option></select></div>
+          <div class="fld"><label>Steroids</label><select id="steroid" onchange="compute()"><option value="">—</option><option>Off</option><option>Low-dose maintenance</option><option>Recent pulse / high-dose</option></select></div>
+          <div class="fld"><label>CNI trough (ng/mL)</label><input id="tac" type="number" step="0.1" oninput="compute()"></div>
+        </div>
+      </div>
+    </details>
+
+    <details class="acc">
+      <summary><span class="ico" style="background:var(--crimson)">&#9829;</span> Cardiovascular <span class="caret">&#9654;</span></summary>
+      <div class="body">
+        <div class="grid3">
+          <div class="fld"><label>Systolic BP</label><input id="sbp" type="number" oninput="compute()"></div>
+          <div class="fld"><label>Diastolic BP</label><input id="dbp" type="number" oninput="compute()"></div>
+          <div class="fld"><label>Established ASCVD</label><select id="ascvdEst" onchange="compute()"><option value="">No</option><option>Yes</option></select></div>
+          <div class="fld"><label>LDL-C (mg/dL)</label><input id="ldl" type="number" oninput="compute()"></div>
+          <div class="fld"><label>HDL-C (mg/dL)</label><input id="hdl" type="number" oninput="compute()"></div>
+          <div class="fld"><label>Triglycerides</label><input id="tg" type="number" oninput="compute()"></div>
+          <div class="fld"><label>10-yr ASCVD (%)</label><input id="ascvd" type="number" step="0.1" oninput="compute()"></div>
+          <div class="fld"><label>CAR-OLT (pts)</label><input id="carolt" type="number" oninput="compute()"></div>
+          <div class="fld"><label>On a statin?</label><select id="statin" onchange="compute()"><option value="">No</option><option>Yes</option></select></div>
+        </div>
+      </div>
+    </details>
+
+    <details class="acc">
+      <summary><span class="ico" style="background:var(--amber)">&#127855;</span> Diabetes / glycaemia <span class="caret">&#9654;</span></summary>
+      <div class="body">
+        <div class="grid3">
+          <div class="fld"><label>HbA1c (%)</label><input id="hba1c" type="number" step="0.1" oninput="compute()"></div>
+          <div class="fld"><label>Fasting glucose</label><input id="fpg" type="number" oninput="compute()"></div>
+          <div class="fld"><label>Known PTDM/DM</label><select id="dmPost" onchange="compute()"><option value="">No</option><option>Yes</option></select></div>
+        </div>
+        <div class="hint">PTDM screen: HbA1c &ge;6.5% or FPG &ge;126 mg/dL on two occasions after stabilisation.</div>
+      </div>
+    </details>
+
+    <details class="acc">
+      <summary><span class="ico" style="background:var(--teal)">&#9878;</span> Obesity / MASLD <span class="caret">&#9654;</span></summary>
+      <div class="body">
+        <div class="grid3">
+          <div class="fld"><label>Weight (kg)</label><input id="wt" type="number" step="0.1" oninput="compute()"></div>
+          <div class="fld"><label>Height (cm)</label><input id="ht" type="number" step="0.1" oninput="compute()"></div>
+          <div class="fld"><label>Waist (cm)</label><input id="waist" type="number" oninput="compute()"></div>
+          <div class="fld"><label>ALT (U/L)</label><input id="alt" type="number" oninput="compute()"></div>
+          <div class="fld"><label>MR-PDFF (%)</label><input id="pdff" type="number" step="0.1" oninput="compute()"></div>
+          <div class="fld"><label>Liver stiffness (kPa)</label><input id="lsm" type="number" step="0.1" oninput="compute()"></div>
+        </div>
+        <div class="hint">VCTE/MRE stiffness &amp; MR-PDFF track recurrent / de-novo MASLD.</div>
+      </div>
+    </details>
+
+    <details class="acc">
+      <summary><span class="ico" style="background:var(--green)">&#129656;</span> Renal <span class="caret">&#9654;</span></summary>
+      <div class="body">
+        <div class="grid3">
+          <div class="fld"><label>Creatinine (mg/dL)</label><input id="cr" type="number" step="0.01" oninput="compute()"></div>
+          <div class="fld"><label>eGFR (mL/min/1.73)</label><input id="egfr" type="number" oninput="compute()"></div>
+          <div class="fld"><label>Urine ACR (mg/g)</label><input id="acr" type="number" oninput="compute()"></div>
+        </div>
+        <div class="hint">Leave eGFR blank to auto-estimate (CKD-EPI 2021) from creatinine, age &amp; sex.</div>
+      </div>
+    </details>
+
+    <details class="acc">
+      <summary><span class="ico" style="background:var(--navy2)">&#128737;</span> Surveillance, bone &amp; vaccines <span class="caret">&#9654;</span></summary>
+      <div class="body">
+        <div class="subhdr">Bone health</div>
+        <div class="grid3">
+          <div class="fld"><label>DEXA T-score (lowest)</label><input id="tscore" type="number" step="0.1" oninput="compute()"></div>
+          <div class="fld"><label>Vitamin D (ng/mL)</label><input id="vitd" type="number" oninput="compute()"></div>
+          <div class="fld"><label>Last DEXA</label><input id="dexaDate" type="date" oninput="compute()"></div>
+        </div>
+        <div class="subhdr">Cancer surveillance &mdash; last done</div>
+        <div class="grid3">
+          <div class="fld"><label>Skin exam</label><input id="skinDate" type="date" oninput="compute()"></div>
+          <div class="fld"><label>Colonoscopy</label><input id="coloDate" type="date" oninput="compute()"></div>
+          <div class="fld"><label>Liver imaging + AFP <span class="unit">(if HCC)</span></label><input id="hccDate" type="date" oninput="compute()"></div>
+          <div class="fld"><label>Cervical (PAP)</label><input id="papDate" type="date" oninput="compute()"></div>
+          <div class="fld"><label>Mammogram</label><input id="mammoDate" type="date" oninput="compute()"></div>
+        </div>
+        <div class="subhdr">Vaccination &mdash; last given</div>
+        <div class="grid3">
+          <div class="fld"><label>Influenza</label><input id="fluDate" type="date" oninput="compute()"></div>
+          <div class="fld"><label>Pneumococcal</label><input id="pneuDate" type="date" oninput="compute()"></div>
+          <div class="fld"><label>COVID-19</label><input id="covidDate" type="date" oninput="compute()"></div>
+        </div>
+      </div>
+    </details>
+
+    <div style="text-align:right;margin-top:4px">
+      <button class="primary" style="background:var(--navy);border:none;color:#fff;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:600" onclick="saveVisit()">&#128190; Save this visit (for delta tracking)</button>
+    </div>
+    <div class="hint" id="lastVisitNote" style="text-align:right"></div>
+  </div>
+
+  <!-- ============ RIGHT: SNAPSHOT ============ -->
+  <div class="col right">
+    <h2 class="sec">Long-term metabolic health snapshot</h2>
+
+    <div class="composite">
+      <div class="gauge" id="gauge"><div class="n" id="gaugeN">—</div><div class="l">Risk index</div></div>
+      <div class="txt"><h3 id="compTitle">Awaiting data</h3><p id="compSub">Enter recipient parameters or load the demo case to generate a snapshot.</p></div>
+    </div>
+
+    <div class="dom-grid" id="domGrid"></div>
+
+    <div class="snap" style="margin-top:14px">
+      <h2 class="sec" style="margin-bottom:8px">Priority actions &amp; recommendations</h2>
+      <ul class="act-list" id="actList"><li class="empty">No recommendations yet.</li></ul>
+    </div>
+
+    <div class="snap">
+      <h2 class="sec" style="margin-bottom:8px">Reminders &mdash; surveillance, bone &amp; vaccines</h2>
+      <div id="remList"><div class="empty">No reminders yet.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ INTEGRATED CARE PLATFORM ============ -->
+<div class="platform">
+  <div class="pbar">
+    <div class="phead">
+      <div>
+        <div class="pt">Integrated care platform</div>
+        <div class="psub">Secure messaging &middot; patient-reported outcomes &middot; shared-care scheduling</div>
+      </div>
+      <div class="tabs">
+        <button id="tab-msg" class="on" onclick="switchTab('msg')">&#128172; Messaging</button>
+        <button id="tab-prom" onclick="switchTab('prom')">&#128203; PROMs</button>
+        <button id="tab-sched" onclick="switchTab('sched')">&#128197; Scheduling</button>
+      </div>
+    </div>
+
+    <!-- MESSAGING -->
+    <div id="panel-msg" class="panel on">
+      <div class="pgrid">
+        <div class="pcard">
+          <h4>Recipient &harr; team thread</h4>
+          <div class="thread" id="thread"><div class="msgempty">No messages yet. Start the conversation below.</div></div>
+          <div class="msgbar">
+            <input id="msgIn" placeholder="Message as clinician…" onkeydown="if(event.key==='Enter')sendMsg()">
+            <button class="btn" onclick="sendMsg()">Send</button>
+            <button class="btn ghost" onclick="simPatient()" title="Simulate an inbound patient message">Simulate reply</button>
+          </div>
+        </div>
+        <div class="pcard">
+          <h4>Why in-platform messaging</h4>
+          <p style="font-size:12.5px;color:var(--ink);line-height:1.5;margin:0 0 8px">Asynchronous, documented contact catches problems early and cuts travel for rural recipients. Messages are scanned for urgent keywords (fever, jaundice, missed doses, chest pain, swelling) and surfaced as a <b>red action</b> in the snapshot.</p>
+          <p class="psmall">Demonstration only — messages stay on the device (local browser storage). A production build routes through the EHR with clinician triage and audit.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROMs -->
+    <div id="panel-prom" class="panel">
+      <div class="pgrid">
+        <div class="pcard">
+          <h4>Patient-reported outcome check-in</h4>
+          <div id="promForm"></div>
+          <button class="btn navy" onclick="submitProm()">Submit check-in</button>
+        </div>
+        <div class="pcard">
+          <h4>Wellbeing &amp; trend</h4>
+          <div id="promResult"><p style="font-size:12.5px;color:var(--grey);margin:0">No check-ins yet. Submit one to generate a wellbeing index and trend.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCHEDULING -->
+    <div id="panel-sched" class="panel">
+      <div class="pgrid">
+        <div class="pcard">
+          <h4>Book a follow-up</h4>
+          <div class="suggest" id="apptSuggest">Load a recipient to see the phase-based cadence.</div>
+          <div class="schedrow">
+            <div class="fld"><label>Type</label>
+              <select id="apptType"><option>Routine review</option><option>Lab-only (local)</option><option>Telehealth review</option><option>Problem visit</option><option>Surveillance imaging</option><option>Vaccination</option></select></div>
+            <div class="fld"><label>Date</label><input id="apptDate" type="date"></div>
+            <div class="fld"><label>Mode</label>
+              <select id="apptMode"><option>Telehealth</option><option>In-person (centre)</option><option>Shared-care (local)</option></select></div>
+            <button class="btn" onclick="addAppt()">Add</button>
+          </div>
+          <p class="psmall">Telehealth &amp; local shared-care visits reduce travel burden; reserve in-person for milestones and problems.</p>
+        </div>
+        <div class="pcard">
+          <h4>Upcoming &amp; past appointments</h4>
+          <div id="apptList"><p style="font-size:12.5px;color:var(--grey);margin:0">No appointments scheduled.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="foot">
+  <div class="disclaim">
+    <b>Clinical decision-support tool &mdash; not a substitute for clinical judgement.</b> Thresholds synthesise AASLD/AST 2022, EASL 2024, KDIGO 2024, ADA 2024, 2018 AHA/ACC cholesterol guidance &amp; Harinstein <i>Eur Heart J</i> 2024. All data stay on the device (local browser storage); nothing is transmitted. Verify every recommendation against local protocol before acting.
+  </div>
+  <div style="margin-top:8px">SMART Liver Transplant Clinic &middot; Long-term metabolic health OPD &middot; Dr Swapnil Dhampalwar</div>
+</div>
+
+<script>
+/* ============================================================
+   SMART Liver Transplant Clinic — rule engine
+   ============================================================ */
+const $=id=>document.getElementById(id);
+const num=id=>{const v=parseFloat($(id).value);return isNaN(v)?null:v;};
+const val=id=>$(id).value||null;
+const KEY='smartLTx_v1';
+const LS=(function(){try{var k='__lsprobe__';window.localStorage.setItem(k,'1');window.localStorage.removeItem(k);return window.localStorage;}catch(e){var m={};return{getItem:function(k){return (k in m)?m[k]:null;},setItem:function(k,v){m[k]=String(v);},removeItem:function(k){delete m[k];}};}})();
+
+function monthsSince(dateStr){
+  if(!dateStr) return null;
+  const d=new Date(dateStr), now=new Date();
+  return (now-d)/(1000*60*60*24*30.44);
+}
+function daysSince(dateStr){
+  if(!dateStr) return null;
+  return (new Date()-new Date(dateStr))/(1000*60*60*24);
+}
+function phaseOf(m){
+  if(m==null) return {k:'unknown',label:'Timing unknown'};
+  if(m<3) return {k:'early',label:'Early (0–3 mo)'};
+  if(m<12) return {k:'consolidation',label:'Consolidation (3–12 mo)'};
+  if(m<60) return {k:'maintenance',label:'Maintenance (1–5 yr)'};
+  return {k:'longterm',label:'Long-term (>5 yr)'};
+}
+function ckdEpi(cr,age,sex){
+  if(!cr||!age||!sex) return null;
+  const f=sex==='Female';
+  const k=f?0.7:0.9, a=f?-0.241:-0.302;
+  let e=142*Math.pow(Math.min(cr/k,1),a)*Math.pow(Math.max(cr/k,1),-1.200)*Math.pow(0.9938,age);
+  if(f) e*=1.012;
+  return Math.round(e);
+}
+
+/* severity helpers: 0 green,1 amber,2 red */
+const SEV={0:'green',1:'amber',2:'red',3:'grey'};
+function flag(sev,h,c,cite){return {sev,h,c,cite};}
+
+/* ---------- Domain evaluators ---------- */
+function evalCV(D,phase){
+  const F=[]; let lvl=0;
+  const {sbp,dbp,ldl,ascvd,ascvdEst,carolt,cni,statin}=D;
+  if(sbp!=null&&dbp!=null){
+    if(sbp>=140||dbp>=90){lvl=Math.max(lvl,2);F.push(flag(2,'Hypertension above target','BP '+sbp+'/'+dbp+' — target <130/80 in recipients. Optimise: amlodipine first-line; add ACE-i/ARB if albuminuria/CKD.','AASLD/AST 2022; Harinstein EHJ 2024'));}
+    else if(sbp>=130||dbp>=80){lvl=Math.max(lvl,1);F.push(flag(1,'BP above optimal','BP '+sbp+'/'+dbp+' — reinforce lifestyle; treat to <130/80.','Harinstein EHJ 2024'));}
+  }
+  const highCV = ascvdEst==='Yes' || (ascvd!=null&&ascvd>=20) || (carolt!=null&&carolt>=31);
+  const goal = (ascvdEst==='Yes')?55:(ascvd!=null&&ascvd>=20?70:100);
+  if(ldl!=null){
+    if(ldl>goal+30||ldl>=160){lvl=Math.max(lvl,2);}
+    else if(ldl>goal){lvl=Math.max(lvl,1);}
+    if(ldl>goal){
+      let stat = cni==='Cyclosporine'
+        ? 'On cyclosporine: prefer pravastatin/fluvastatin; cap rosuvastatin ≤5 mg, atorvastatin ≤10 mg; avoid simvastatin/lovastatin; pitavastatin contraindicated.'
+        : 'Tacrolimus is statin-tolerant: use ASCVD-guided moderate–high intensity; recheck lipids 6–12 wk.';
+      F.push(flag(ldl>goal+30?2:1,'LDL above goal ('+ldl+' vs <'+goal+' mg/dL)', (statin==='Yes'?'Intensify / add ezetimibe → PCSK9i. ':'Start statin. ')+stat,'2018 AHA/ACC; Harinstein EHJ 2024'));
+    }
+  }
+  if(carolt!=null){
+    const band = carolt<=15?'low':carolt<=30?'moderate':carolt<=36?'high':'very high';
+    if(carolt>=31){lvl=Math.max(lvl,2);F.push(flag(2,'CAR-OLT '+band+' ('+carolt+' pts)','Elevated 1-yr CV event risk. If symptoms or ischaemia — anatomic imaging (CT-CAG/CCTA), framed by CAD-LT tier; cardiology co-management.','VanWagner Hepatology 2017'));}
+    else if(carolt>=16){F.push(flag(1,'CAR-OLT '+band+' ('+carolt+' pts)','Re-stratify annually; aggressive risk-factor control.','VanWagner Hepatology 2017'));lvl=Math.max(lvl,1);}
+  }
+  if(highCV) F.push(flag(1,'High-risk CV phenotype','Consider CT coronary angiography to define anatomy; low-dose aspirin per protocol; annual re-stratification.','Harinstein EHJ 2024'));
+  return {lvl,F,summary:cvSummary(D,goal)};
+}
+function cvSummary(D,goal){
+  let s=[];
+  if(D.sbp!=null&&D.dbp!=null) s.push('BP '+D.sbp+'/'+D.dbp);
+  if(D.ldl!=null) s.push('LDL '+D.ldl);
+  if(D.ascvd!=null) s.push('ASCVD '+D.ascvd+'%');
+  if(D.carolt!=null) s.push('CAR-OLT '+D.carolt);
+  return s.join(' · ')||'No CV data';
+}
+
+function evalDM(D,phase){
+  const F=[]; let lvl=0;
+  const {hba1c,fpg,dmPost,egfr,cni,steroid}=D;
+  const ptdm = dmPost==='Yes' || (hba1c!=null&&hba1c>=6.5) || (fpg!=null&&fpg>=126);
+  if(hba1c!=null){
+    if(hba1c>=8){lvl=2;F.push(flag(2,'Poor glycaemic control (HbA1c '+hba1c+'%)','Escalate: metformin if eGFR≥30; add GLP-1 RA or SGLT2i (CV/renal benefit). If steroid-driven, minimise steroids; if CNI-driven consider tacrolimus dose review.','ADA 2024; KDIGO 2024'));}
+    else if(hba1c>=7){lvl=Math.max(lvl,1);F.push(flag(1,'HbA1c above target ('+hba1c+'%)','Intensify lifestyle + pharmacotherapy toward <7% (individualise).','ADA 2024'));}
+  }
+  if(ptdm && dmPost!=='Yes'){lvl=Math.max(lvl,1);F.push(flag(1,'New PTDM likely','HbA1c/FPG in diabetic range — confirm, stage, and start structured management. Screen at each visit in year 1.','AASLD/AST 2022; ADA 2024'));}
+  if(ptdm && egfr!=null && egfr>=20 && egfr<60) F.push(flag(1,'Diabetes + CKD','Prefer SGLT2i (if eGFR≥20) &/or GLP-1 RA for cardiorenal protection.','KDIGO 2024'));
+  let s=[]; if(hba1c!=null)s.push('HbA1c '+hba1c+'%'); if(fpg!=null)s.push('FPG '+fpg); if(ptdm)s.push('PTDM');
+  return {lvl,F,summary:s.join(' · ')||'No glycaemic data'};
+}
+
+function evalMASLD(D,phase){
+  const F=[]; let lvl=0;
+  const {bmi,waist,pdff,lsm,alt,indication,steroid}=D;
+  if(bmi!=null){
+    if(bmi>=30){lvl=Math.max(lvl,2);F.push(flag(2,'Obesity (BMI '+bmi.toFixed(1)+')','Target ≥7–10% weight loss; structured diet + activity; consider GLP-1 RA / dual agonist; minimise maintenance steroids.','EASL 2024'));}
+    else if(bmi>=25){lvl=Math.max(lvl,1);F.push(flag(1,'Overweight (BMI '+bmi.toFixed(1)+')','Lifestyle intervention; prevent post-LT weight gain.','EASL 2024'));}
+  }
+  if(pdff!=null&&pdff>=5){lvl=Math.max(lvl,pdff>=10?2:1);F.push(flag(pdff>=10?2:1,'Hepatic steatosis (MR-PDFF '+pdff+'%)','Recurrent/de-novo MASLD. Weight loss + metabolic control; recheck MR-PDFF + elastography annually.','EASL 2024'));}
+  if(lsm!=null){
+    if(lsm>12){lvl=2;F.push(flag(2,'Advanced fibrosis risk (LSM '+lsm+' kPa)','Elastography suggests significant/advanced fibrosis — hepatology review; exclude other graft injury; consider biopsy if progressive.','EASL 2024'));}
+    else if(lsm>=8){lvl=Math.max(lvl,1);F.push(flag(1,'Indeterminate stiffness (LSM '+lsm+' kPa)','Repeat elastography 6–12 mo; intensify metabolic control.','EASL 2024'));}
+  }
+  if(alt!=null&&alt>50) F.push(flag(1,'ALT elevated ('+alt+' U/L)','Evaluate graft: rejection, biliary, recurrent disease, drug — MR-PDFF/elastography ± biopsy as indicated.','AASLD/AST 2022'));
+  let s=[]; if(bmi!=null)s.push('BMI '+bmi.toFixed(1)); if(pdff!=null)s.push('PDFF '+pdff+'%'); if(lsm!=null)s.push('LSM '+lsm+'kPa');
+  return {lvl,F,summary:s.join(' · ')||'No MASLD data'};
+}
+
+function evalRenal(D,phase,prev){
+  const F=[]; let lvl=0;
+  const {egfr,cr,acr,tac,cni}=D;
+  if(egfr!=null){
+    if(egfr<30){lvl=2;F.push(flag(2,'CKD stage 4+ (eGFR '+egfr+')','Nephrology referral; CNI minimisation / conversion (MMF or everolimus-based CNI-sparing); avoid nephrotoxins; prepare RRT planning.','KDIGO 2024; AASLD/AST 2022'));}
+    else if(egfr<60){lvl=Math.max(lvl,1);F.push(flag(1,'CKD stage 3 (eGFR '+egfr+')','Minimise CNI exposure to lowest effective trough; RAAS blockade + SGLT2i if albuminuria; monitor 3-monthly.','KDIGO 2024'));}
+  }
+  if(acr!=null&&acr>=30){lvl=Math.max(lvl,acr>=300?2:1);F.push(flag(acr>=300?2:1,'Albuminuria (ACR '+acr+' mg/g)','Start/continue ACE-i or ARB; add SGLT2i for cardiorenal protection; investigate cause.','KDIGO 2024'));}
+  if(tac!=null&&tac>10 && cni==='Tacrolimus'){lvl=Math.max(lvl,1);F.push(flag(1,'High CNI trough ('+tac+' ng/mL)','Supratherapeutic late trough — nephrotoxicity risk; review target for phase and dose-reduce.','AASLD/AST 2022'));}
+  // delta
+  if(prev&&prev.egfr!=null&&egfr!=null){
+    const drop=(prev.egfr-egfr)/prev.egfr*100;
+    if(drop>=25){lvl=2;F.push(flag(2,'Rapid eGFR decline (↓'+Math.round(drop)+'%)','Significant interval fall vs last visit — exclude obstruction/BK/rejection/CNI toxicity; consider renal biopsy if unexplained.','KDIGO 2024'));}
+  }
+  let s=[]; if(egfr!=null)s.push('eGFR '+egfr); if(acr!=null)s.push('ACR '+acr); if(tac!=null)s.push('Tac '+tac);
+  return {lvl,F,summary:s.join(' · ')||'No renal data'};
+}
+
+function evalOther(D,phase){
+  const F=[]; let lvl=0;
+  const {tscore,vitd}=D;
+  if(tscore!=null){
+    if(tscore<=-2.5){lvl=2;F.push(flag(2,'Osteoporosis (T '+tscore+')','Calcium + vitamin D; start bisphosphonate (or denosumab); minimise steroids; fracture-risk review.','AASLD/AST 2022'));}
+    else if(tscore<=-1){lvl=Math.max(lvl,1);F.push(flag(1,'Osteopenia (T '+tscore+')','Optimise calcium/vitamin D, weight-bearing activity; repeat DEXA 1–2 yr.','AASLD/AST 2022'));}
+  }
+  if(vitd!=null&&vitd<20){lvl=Math.max(lvl,1);F.push(flag(1,'Vitamin D deficient ('+vitd+' ng/mL)','Replace vitamin D; recheck at 3 months.','AASLD/AST 2022'));}
+  let s=[]; if(tscore!=null)s.push('T '+tscore); if(vitd!=null)s.push('VitD '+vitd);
+  return {lvl,F,summary:s.join(' · ')||'No bone data'};
+}
+
+/* ---------- Reminders ---------- */
+function reminders(D,phase){
+  const R=[];
+  const add=(label,detail,status)=>R.push({label,detail,status});
+  // Cancer surveillance
+  const hcc = D.indication==='HCC';
+  chk(R,'Dermatology / skin exam',D.skinDate,365,'Annual — elevated skin-cancer risk on immunosuppression.');
+  if(hcc){
+    const iv = phase.k==='longterm'?365:183;
+    chk(R,'Liver imaging + AFP (HCC surveillance)',D.hccDate,iv, iv===183?'6-monthly for first 2–5 yr post-LT.':'Annual after 5 yr if recurrence-free.');
+  }
+  chk(R,'Colorectal screening',D.coloDate, D.indication&&D.indication.indexOf('PSC')>-1?365:1825, 'Per age/risk; annual if PSC-IBD.');
+  if(D.sex==='Female'){
+    chk(R,'Cervical cytology (PAP)',D.papDate,365,'Annual on immunosuppression.');
+    if(D.age!=null&&D.age>=40) chk(R,'Mammogram',D.mammoDate,730,'Every 1–2 yr per age/risk.');
+  }
+  // Bone
+  chk(R,'DEXA bone densitometry',D.dexaDate, (D.tscore!=null&&D.tscore<=-1)?365:730, 'Baseline then 1–2 yearly; annually if osteopenia/therapy.');
+  // Vaccines (inactivated only post-LT)
+  chk(R,'Influenza vaccine',D.fluDate,365,'Annual inactivated influenza.');
+  chk(R,'Pneumococcal vaccine',D.pneuDate,1825,'PCV then PPSV23; ~5-yearly.');
+  chk(R,'COVID-19 vaccine',D.covidDate,365,'Keep current per national schedule.');
+  return R;
+}
+function chk(R,label,date,dueDays,detail){
+  const d=daysSince(date);
+  let status;
+  if(d==null) status='due';
+  else if(d>=dueDays) status='due';
+  else if(d>=dueDays-60) status='soon';
+  else status='ok';
+  R.push({label,detail:date?detail+' Last: '+date+'.':detail+' No record on file.',status});
+}
+
+/* ---------- Master compute ---------- */
+function gather(){
+  const cr=num('cr'), age=num('age'), sex=val('sex');
+  let egfr=num('egfr'); if(egfr==null) egfr=ckdEpi(cr,age,sex);
+  const wt=num('wt'), ht=num('ht');
+  const bmi=(wt&&ht)?wt/Math.pow(ht/100,2):null;
+  return {
+    name:val('name'),age,sex,ltDate:val('ltDate'),graft:val('graft'),indication:val('indication'),
+    meldPre:num('meldPre'),dmPre:val('dmPre'),ckdPre:val('ckdPre'),
+    cni:val('cni'),adjunct:val('adjunct'),steroid:val('steroid'),tac:num('tac'),
+    sbp:num('sbp'),dbp:num('dbp'),ldl:num('ldl'),hdl:num('hdl'),tg:num('tg'),
+    ascvd:num('ascvd'),ascvdEst:val('ascvdEst'),carolt:num('carolt'),statin:val('statin'),
+    hba1c:num('hba1c'),fpg:num('fpg'),dmPost:val('dmPost'),
+    wt,ht,bmi,waist:num('waist'),alt:num('alt'),pdff:num('pdff'),lsm:num('lsm'),
+    cr,egfr,acr:num('acr'),
+    tscore:num('tscore'),vitd:num('vitd'),dexaDate:val('dexaDate'),
+    skinDate:val('skinDate'),coloDate:val('coloDate'),hccDate:val('hccDate'),papDate:val('papDate'),mammoDate:val('mammoDate'),
+    fluDate:val('fluDate'),pneuDate:val('pneuDate'),covidDate:val('covidDate')
+  };
+}
+
+let LAST=null; // previous saved visit for delta
+function compute(){
+  const D=gather();
+  const m=monthsSince(D.ltDate);
+  const phase=phaseOf(m);
+  const prev=LAST;
+  // chips
+  $('chipName').innerHTML = D.name? '<b>'+D.name+'</b>'+(D.age?' · '+D.age+(D.sex?' '+D.sex[0]:''):'') : 'No recipient loaded';
+  $('chipPhase').innerHTML = (m!=null? Math.round(m)+' mo post-LT · ':'') + phase.label;
+
+  const domains=[
+    {key:'cv',name:'Cardiovascular',color:'crimson',e:evalCV(D,phase)},
+    {key:'dm',name:'Diabetes',color:'amber',e:evalDM(D,phase)},
+    {key:'masld',name:'Obesity / MASLD',color:'teal',e:evalMASLD(D,phase)},
+    {key:'renal',name:'Renal',color:'green',e:evalRenal(D,phase,prev)},
+    {key:'other',name:'Bone / other',color:'navy',e:evalOther(D,phase)}
+  ];
+  renderDomains(domains,D,prev);
+  renderComposite(domains,D);
+  renderActions(domains, promFlags().concat(msgFlags()));
+  renderReminders(reminders(D,phase));
+  renderApptSuggest(phase);
+  persist(D);
+}
+
+function deltaHTML(cur,prev,key,invGood,unit,dp){
+  if(cur==null||prev==null||prev[key]==null) return '';
+  const p=prev[key];
+  const diff=cur-p;
+  if(Math.abs(diff)<(dp?0.05:0.5)) return ' <span class="delta" style="color:var(--grey)">→</span>';
+  const worse = invGood? diff>0 : diff<0; // invGood=true means higher is worse
+  const cls = worse?'up':'down';
+  const arrow = diff>0?'▲':'▼';
+  return ' <span class="delta '+cls+'">'+arrow+Math.abs(diff).toFixed(dp?1:0)+(unit||'')+'</span>';
+}
+
+function renderDomains(domains,D,prev){
+  const map={cv:['ldl'],dm:['hba1c'],masld:['bmi'],renal:['egfr'],other:['tscore']};
+  let h='';
+  domains.forEach(d=>{
+    const lvl=d.e.lvl;
+    const bcls = lvl===2?'b-red':lvl===1?'b-amber':(d.e.summary.startsWith('No')?'b-grey':'b-green');
+    const dcls = lvl===2?'d-red':lvl===1?'d-amber':(d.e.summary.startsWith('No')?'d-grey':'d-green');
+    const lbl = lvl===2?'High':lvl===1?'Watch':(d.e.summary.startsWith('No')?'No data':'On target');
+    // delta annotation for the headline metric
+    let delta='';
+    if(prev){
+      if(d.key==='cv'&&D.ldl!=null) delta=deltaHTML(D.ldl,prev,'ldl',true,'');
+      if(d.key==='dm'&&D.hba1c!=null) delta=deltaHTML(D.hba1c,prev,'hba1c',true,'%',1);
+      if(d.key==='masld'&&D.bmi!=null) delta=deltaHTML(D.bmi,prev,'bmi',true,'',1);
+      if(d.key==='renal'&&D.egfr!=null) delta=deltaHTML(D.egfr,prev,'egfr',false,'');
+      if(d.key==='other'&&D.tscore!=null) delta=deltaHTML(D.tscore,prev,'tscore',false,'',1);
+    }
+    h+='<div class="dcard"><div class="top"><span class="dot '+dcls+'"></span><h4>'+d.name+'</h4>'
+      +'<span class="badge '+bcls+'">'+lbl+'</span></div>'
+      +'<div class="metrics">'+d.e.summary+delta+'</div></div>';
+  });
+  $('domGrid').innerHTML=h;
+}
+
+function renderComposite(domains,D){
+  const withData=domains.filter(d=>!d.e.summary.startsWith('No'));
+  if(withData.length===0){
+    $('gaugeN').textContent='—'; $('gauge').style.background='#33507f';
+    $('compTitle').textContent='Awaiting data';
+    $('compSub').textContent='Enter recipient parameters or load the demo case to generate a snapshot.';
+    return;
+  }
+  const score=withData.reduce((a,d)=>a+d.e.lvl,0);
+  const maxScore=withData.length*2;
+  const idx=Math.round(100-(score/maxScore*100)); // 100 best
+  let band,col,sub;
+  const reds=withData.filter(d=>d.e.lvl===2).length;
+  if(idx>=80&&reds===0){band='Optimal';col='var(--green)';sub='Metabolic health well controlled — maintain surveillance and lifestyle.';}
+  else if(idx>=55&&reds<=1){band='Guarded';col='var(--amber)';sub='One or more domains need intensification — see priority actions.';}
+  else {band='High risk';col='var(--crimson)';sub=reds+' domain(s) at high risk — escalate management and follow-up.';}
+  $('gauge').style.background=col;
+  $('gaugeN').textContent=idx;
+  $('compTitle').textContent=band+' metabolic health';
+  $('compSub').textContent=sub;
+}
+
+function renderActions(domains, extra){
+  let all=[];
+  domains.forEach(d=>d.e.F.forEach(f=>all.push(f)));
+  if(extra) extra.forEach(f=>all.push(f));
+  all.sort((a,b)=>b.sev-a.sev);
+  if(all.length===0){$('actList').innerHTML='<li class="empty">No flags — all captured domains within target. Continue routine surveillance.</li>';return;}
+  const tagOf=s=>s===2?'<span class="tag b-red">Act now</span>':s===1?'<span class="tag b-amber">Optimise</span>':'<span class="tag b-green">Monitor</span>';
+  const sevCol=s=>s===2?'var(--crimson)':s===1?'var(--amber)':'var(--green)';
+  $('actList').innerHTML=all.map(f=>
+    '<li><div class="sev" style="background:'+sevCol(f.sev)+'"></div><div class="txt">'
+    +'<div class="h">'+tagOf(f.sev)+f.h+'</div><div class="c">'+f.c+'</div>'
+    +(f.cite?'<div class="cite">'+f.cite+'</div>':'')+'</div></li>').join('');
+}
+
+function renderReminders(R){
+  const order={due:0,soon:1,ok:2};
+  R.sort((a,b)=>order[a.status]-order[b.status]);
+  const ic={due:'&#128308;',soon:'&#128993;',ok:'&#128994;'};
+  const sl={due:'Due',soon:'Soon',ok:'Up to date'};
+  $('remList').innerHTML=R.map(r=>
+    '<div class="rem '+r.status+'"><span class="ic">'+ic[r.status]+'</span>'
+    +'<div class="r-t"><b>'+r.label+'</b><br><span style="font-size:11px;color:var(--grey)">'+r.detail+'</span></div>'
+    +'<span class="r-s s-'+r.status+'">'+sl[r.status]+'</span></div>').join('');
+}
+
+/* ---------- Persistence & visits ---------- */
+function persist(D){
+  try{
+    const store=JSON.parse(LS.getItem(KEY)||'{}');
+    store.current=D;
+    LS.setItem(KEY,JSON.stringify(store));
+  }catch(e){}
+}
+function saveVisit(){
+  const D=gather();
+  D._savedAt=new Date().toISOString().slice(0,10);
+  try{
+    const store=JSON.parse(LS.getItem(KEY)||'{}');
+    store.visits=store.visits||[];
+    store.visits.push(D);
+    LS.setItem(KEY,JSON.stringify(store));
+    LAST=D;
+    $('lastVisitNote').textContent='Visit saved '+D._savedAt+' — next changes will show interval deltas.';
+    compute();
+  }catch(e){alert('Could not save (storage blocked).');}
+}
+function loadStore(){
+  try{
+    const store=JSON.parse(LS.getItem(KEY)||'{}');
+    if(store.visits&&store.visits.length){LAST=store.visits[store.visits.length-1];
+      $('lastVisitNote').textContent='Last saved visit: '+(LAST._savedAt||'—');}
+    if(store.current) fill(store.current);
+  }catch(e){}
+}
+function fill(D){
+  for(const k in D){ const el=$(k); if(el&&typeof D[k]!=='object') el.value=(D[k]==null?'':D[k]); }
+  compute();
+}
+function newCase(){
+  if(!confirm('Clear all fields for a new recipient? (Saved visit history is kept.)')) return;
+  document.querySelectorAll('input,select').forEach(e=>{if(e.type!=='file')e.value='';});
+  LAST=null; compute();
+}
+function exportJSON(){
+  const store=JSON.parse(LS.getItem(KEY)||'{}');
+  const blob=new Blob([JSON.stringify(store,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=(val('name')||'recipient')+'_smartLTx.json';a.click();
+}
+function importJSON(ev){
+  const f=ev.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=e=>{try{const store=JSON.parse(e.target.result);LS.setItem(KEY,JSON.stringify(store));
+    if(store.visits&&store.visits.length)LAST=store.visits[store.visits.length-1];
+    if(store.current)fill(store.current);else if(store.visits)fill(store.visits[store.visits.length-1]);
+  }catch(err){alert('Invalid file.');}};
+  r.readAsText(f);
+}
+
+/* ---------- Demo case ---------- */
+function loadDemo(){
+  const today=new Date();
+  const ltd=new Date(today.getFullYear()-2,today.getMonth()-1,15).toISOString().slice(0,10);
+  const dm=(mAgo)=>{const d=new Date();d.setMonth(d.getMonth()-mAgo);return d.toISOString().slice(0,10);};
+  const demo={
+    name:'Demo — R.K.',age:'54',sex:'Male',ltDate:ltd,graft:'LDLT',indication:'MASH / MAFLD cirrhosis',
+    meldPre:'24',dmPre:'Yes',ckdPre:'No',
+    cni:'Tacrolimus',adjunct:'MMF',steroid:'Low-dose maintenance',tac:'11.5',
+    sbp:'146',dbp:'92',ldl:'138',hdl:'34',tg:'260',ascvd:'22',ascvdEst:'',carolt:'33',statin:'No',
+    hba1c:'8.4',fpg:'168',dmPost:'Yes',
+    wt:'92',ht:'170',waist:'108',alt:'62',pdff:'14',lsm:'9.8',
+    cr:'1.6',egfr:'',acr:'120',
+    tscore:'-1.8',vitd:'17',dexaDate:dm(20),
+    skinDate:'',coloDate:dm(40),hccDate:'',papDate:'',mammoDate:'',
+    fluDate:dm(14),pneuDate:'',covidDate:dm(20)
+  };
+  fill(demo);
+  // seed a prior visit so deltas render
+  const prior=Object.assign({},demo,{ldl:'120',hba1c:'7.6',wt:'88',egfr:'72',cr:'1.3',_savedAt:dm(6)});
+  prior.bmi=88/Math.pow(1.70,2);
+  // seed a full integrated-care demo so the platform is populated on any device
+  const dtm=(dAgo)=>{const d=new Date();if(dAgo)d.setDate(d.getDate()-dAgo);return d.toISOString().slice(0,16).replace('T',' ');};
+  const dday=(mAgo,dAhead)=>{const d=new Date();if(mAgo)d.setMonth(d.getMonth()-mAgo);if(dAhead)d.setDate(d.getDate()+dAhead);return d.toISOString().slice(0,10);};
+  const msgs=[
+    {who:'clin',text:'Hello R.K., please share this week\u2019s home BP readings and confirm your tacrolimus timings.',t:dtm(6)},
+    {who:'pat',text:'My home BP readings have been around 150/95 this week.',t:dtm(5)},
+    {who:'pat',text:'I have been feeling feverish since last night and a bit weak.',t:dtm(0)}
+  ];
+  const mkProm=(ans)=>{const vals=Object.keys(ans).map(k=>ans[k]).filter(v=>v!=null);const wb=Math.round(100-(vals.reduce((a,b)=>a+b,0)/(vals.length*3))*100);return {wb:wb,ans:ans};};
+  const proms=[
+    Object.assign({d:dday(4,0)},mkProm({phq1:0,phq2:0,adh:0,fatigue:1,health:1})),
+    Object.assign({d:dday(2,0)},mkProm({phq1:1,phq2:1,adh:1,fatigue:2,health:2})),
+    Object.assign({d:dday(0,-12)},mkProm({phq1:2,phq2:1,adh:2,fatigue:2,health:3}))
+  ];
+  const appts=[
+    {id:1,date:dday(1,0),type:'Comprehensive annual review',mode:'In-person'},
+    {id:2,date:dday(0,14),type:'Metabolic & lipid review',mode:'Teleconsult'},
+    {id:3,date:dday(0,95),type:'Graft & renal review',mode:'In-person'}
+  ];
+  try{const store=JSON.parse(LS.getItem(KEY)||'{}');
+    store.current=demo; store.visits=[prior]; store.messages=msgs; store.proms=proms; store.appts=appts;
+    LS.setItem(KEY,JSON.stringify(store));}catch(e){}
+  LAST=prior; const lv=$('lastVisitNote'); if(lv) lv.textContent='Demo: prior visit '+prior._savedAt+' seeded for delta tracking.';
+  compute(); if(typeof initPlatform==='function') initPlatform();
+}
+
+/* ============================================================
+   INTEGRATED CARE PLATFORM — messaging, PROMs, scheduling
+   ============================================================ */
+function getStore(){try{return JSON.parse(LS.getItem(KEY)||'{}');}catch(e){return {};}}
+function setStore(s){try{LS.setItem(KEY,JSON.stringify(s));}catch(e){}}
+
+function switchTab(t){
+  ['msg','prom','sched'].forEach(x=>{
+    $('tab-'+x).classList.toggle('on',x===t);
+    $('panel-'+x).classList.toggle('on',x===t);
+  });
+}
+
+/* ---------- Messaging ---------- */
+const URGENT=/\b(fever|febrile|jaundice|yellow|chest pain|breathless|short of breath|swell|swollen|miss(ed|ing)?|stopped|ran out|vomit|black stool|melena|confus|bleed|rigor)/i;
+function renderThread(){
+  const s=getStore(); const m=s.messages||[];
+  if(!m.length){$('thread').innerHTML='<div class="msgempty">No messages yet. Start the conversation below.</div>';return;}
+  $('thread').innerHTML=m.map(x=>{
+    const urg=x.who==='pat'&&URGENT.test(x.text);
+    return '<div class="msg '+(x.who==='clin'?'clin':'pat')+(urg?' urgent':'')+'">'
+      +'<div class="who">'+(x.who==='clin'?'Care team':'Recipient')+' · '+x.t+'</div>'
+      +esc(x.text)+(urg?'<div class="flag">&#9873; Urgent keyword — flagged to team</div>':'')+'</div>';
+  }).join('');
+  const th=$('thread'); th.scrollTop=th.scrollHeight;
+}
+function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+function pushMsg(who,text){
+  if(!text||!text.trim())return;
+  const s=getStore(); s.messages=s.messages||[];
+  s.messages.push({who,text:text.trim(),t:new Date().toISOString().slice(0,16).replace('T',' ')});
+  setStore(s); renderThread(); compute();
+}
+function sendMsg(){pushMsg('clin',$('msgIn').value); $('msgIn').value='';}
+const PAT_REPLIES=[
+  "Thanks doctor, I am taking my tacrolimus twice daily as advised.",
+  "I have been feeling feverish since last night and a bit weak.",
+  "I ran out of my mycophenolate two days ago and could not get to the pharmacy.",
+  "My home BP readings have been around 150/95 this week.",
+  "No new problems, my next local blood test is booked.",
+  "I have some swelling in both ankles and my weight is up 3 kg."
+];
+function simPatient(){pushMsg('pat',PAT_REPLIES[Math.floor(Math.random()*PAT_REPLIES.length)]);}
+function msgFlags(){
+  const s=getStore(); const m=s.messages||[];
+  for(let i=m.length-1;i>=0;i--){
+    if(m[i].who==='pat'){
+      if(URGENT.test(m[i].text))
+        return [{sev:2,h:'Urgent patient message needs review',c:'Recipient reported: “'+m[i].text+'” — contact the recipient and assess for infection, rejection or non-adherence.',cite:'In-platform messaging triage'}];
+      break;
+    }
+  }
+  return [];
+}
+
+/* ---------- PROMs ---------- */
+const PROMQ=[
+  {id:'phq1',q:'Over 2 weeks: little interest or pleasure in doing things',o:['Not at all','Several days','More than half','Nearly every day']},
+  {id:'phq2',q:'Over 2 weeks: feeling down, depressed or hopeless',o:['Not at all','Several days','More than half','Nearly every day']},
+  {id:'adh',q:'In the last month, how often did you miss a dose of your medicines?',o:['Never','Once or twice','Weekly','Often']},
+  {id:'fatigue',q:'How much has fatigue limited your daily activities?',o:['Not at all','A little','Quite a bit','A great deal']},
+  {id:'health',q:'Overall, how would you rate your health this month?',o:['Excellent','Good','Fair','Poor']}
+];
+function renderPromForm(){
+  $('promForm').innerHTML=PROMQ.map(q=>
+    '<div class="prom-q"><div class="qt">'+q.q+'</div><div class="opts">'
+    +q.o.map((opt,i)=>'<label><input type="radio" name="'+q.id+'" value="'+i+'">'+opt+'</label>').join('')
+    +'</div></div>').join('');
+}
+function submitProm(){
+  const ans={}; let answered=0;
+  PROMQ.forEach(q=>{const el=document.querySelector('input[name="'+q.id+'"]:checked'); if(el){ans[q.id]=+el.value;answered++;}else ans[q.id]=null;});
+  if(!answered){alert('Select at least one response.');return;}
+  const vals=PROMQ.map(q=>ans[q.id]).filter(v=>v!=null);
+  const wb=Math.round(100-(vals.reduce((a,b)=>a+b,0)/(vals.length*3))*100);
+  const s=getStore(); s.proms=s.proms||[];
+  s.proms.push({d:new Date().toISOString().slice(0,10),wb,ans});
+  setStore(s); renderPromResult(); compute();
+  PROMQ.forEach(q=>{const el=document.querySelector('input[name="'+q.id+'"]:checked'); if(el)el.checked=false;});
+}
+function promFlags(){
+  const s=getStore(); const p=s.proms||[]; if(!p.length)return [];
+  const a=p[p.length-1].ans; const F=[];
+  const phq=(a.phq1||0)+(a.phq2||0);
+  if(phq>=3) F.push({sev:1,h:'Positive depression screen (PHQ-2)',c:'PHQ-2 = '+phq+'/6 — assess mood formally; depression worsens adherence and outcomes.',cite:'PROM check-in · PHQ-2'});
+  if((a.adh||0)>=2) F.push({sev:2,h:'Self-reported missed medication',c:'Recipient reports frequent missed doses — high graft-loss risk; simplify regimen, address barriers, check tacrolimus IPV.',cite:'PROM check-in · adherence'});
+  else if((a.adh||0)===1) F.push({sev:1,h:'Occasional missed doses reported',c:'Reinforce adherence; consider reminders / once-daily formulation.',cite:'PROM check-in · adherence'});
+  if((a.health||0)>=3) F.push({sev:1,h:'Self-rated health poor',c:'Explore drivers — physical, psychological or social; review QoL.',cite:'PROM check-in'});
+  if((a.fatigue||0)>=3) F.push({sev:1,h:'Severe fatigue reported',c:'Assess anaemia, graft function, mood, sleep, frailty/sarcopenia.',cite:'PROM check-in'});
+  return F;
+}
+function renderPromResult(){
+  const s=getStore(); const p=s.proms||[];
+  if(!p.length){$('promResult').innerHTML='<p style="font-size:12.5px;color:var(--grey);margin:0">No check-ins yet. Submit one to generate a wellbeing index and trend.</p>';return;}
+  const last=p[p.length-1];
+  const col=last.wb>=70?'var(--green)':last.wb>=45?'var(--amber)':'var(--crimson)';
+  const recent=p.slice(-6);
+  const bars=recent.map(x=>{const c=x.wb>=70?'var(--green)':x.wb>=45?'var(--amber)':'var(--crimson)';
+    return '<div class="bar" style="height:'+Math.max(8,x.wb*0.56)+'px;background:'+c+'"><span>'+x.d.slice(5)+'</span></div>';}).join('');
+  const fl=promFlags();
+  const flHTML=fl.length? fl.map(f=>'<div class="promflag" style="background:'+(f.sev===2?'var(--red-bg)':'var(--amber-bg)')+';color:'+(f.sev===2?'var(--crimson)':'var(--amber)')+'"><b>'+f.h+'</b></div>').join('')
+    : '<div class="promflag" style="background:var(--green-bg);color:var(--green)">No PROM red flags this check-in.</div>';
+  $('promResult').innerHTML=
+    '<div class="promResult"><div class="wbgauge" style="background:'+col+'"><b>'+last.wb+'</b><span>Wellbeing</span></div>'
+    +'<div><div style="font-size:11px;color:var(--grey);margin-bottom:20px">Wellbeing index trend (last '+recent.length+')</div>'
+    +'<div class="spark">'+bars+'</div></div></div>'
+    +'<div style="margin-top:14px">'+flHTML+'</div>'
+    +'<p class="psmall">Wellbeing index = 100 − normalised symptom burden. Screening aid, not a diagnostic instrument. Flags also appear in the priority-action list.</p>';
+}
+
+/* ---------- Scheduling ---------- */
+const MONTHS=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+function apptCadence(phase){
+  switch(phase&&phase.k){
+    case 'early':return 'Early phase (0–3 mo): review at the centre every 1–2 weeks; watch IS levels, infection, graft function.';
+    case 'consolidation':return 'Consolidation (3–12 mo): centre review monthly → every 2–3 months; PTDM/lipid/BP surveillance.';
+    case 'maintenance':return 'Maintenance (1–5 yr): shared review every 3–6 months; annual comprehensive; HCC imaging 6-monthly if applicable.';
+    case 'longterm':return 'Long-term (>5 yr): shared review every 6–12 months; local labs, annual risk & graft review.';
+    default:return 'Enter the transplant date to see the phase-based follow-up cadence.';
+  }
+}
+function renderApptSuggest(phase){const el=$('apptSuggest'); if(el)el.textContent=apptCadence(phase);}
+function addAppt(){
+  const date=$('apptDate').value; if(!date){alert('Choose a date.');return;}
+  const s=getStore(); s.appts=s.appts||[];
+  s.appts.push({id:Date.now(),date,type:$('apptType').value,mode:$('apptMode').value});
+  setStore(s); $('apptDate').value=''; renderAppts();
+}
+function delAppt(id){const s=getStore(); s.appts=(s.appts||[]).filter(a=>a.id!==id); setStore(s); renderAppts();}
+function renderAppts(){
+  const s=getStore(); let a=(s.appts||[]).slice();
+  if(!a.length){$('apptList').innerHTML='<p style="font-size:12.5px;color:var(--grey);margin:0">No appointments scheduled.</p>';return;}
+  const today=new Date().toISOString().slice(0,10);
+  a.sort((x,y)=>x.date<y.date?-1:1);
+  const up=a.filter(x=>x.date>=today), past=a.filter(x=>x.date<today);
+  const row=x=>{const d=new Date(x.date+'T00:00'); const tele=/tele/i.test(x.mode);
+    return '<div class="appt'+(x.date<today?' past':'')+'"><div class="cal"><div class="mo">'+MONTHS[d.getMonth()]+'</div><div class="dy">'+d.getDate()+'</div></div>'
+      +'<div class="ainfo"><b>'+x.type+'</b><div class="amode">'+x.date+' · '+x.mode+'</div></div>'
+      +'<span class="mode '+(tele?'tele':'inp')+'">'+(tele?'Tele':'In-person')+'</span>'
+      +'<button class="del" title="Remove" onclick="delAppt('+x.id+')">&times;</button></div>';};
+  $('apptList').innerHTML=(up.length?'<div style="font-size:10.5px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Upcoming</div>'+up.map(row).join(''):'')
+    +(past.length?'<div style="font-size:10.5px;font-weight:700;color:var(--grey);text-transform:uppercase;letter-spacing:.5px;margin:8px 0 6px">Past</div>'+past.map(row).join(''):'');
+}
+
+function initPlatform(){renderThread();renderPromForm();renderPromResult();renderAppts();}
+
+window.addEventListener('DOMContentLoaded',()=>{
+  let _s={}; try{_s=JSON.parse(LS.getItem(KEY)||'{}');}catch(e){}
+  const _has=(_s.current)||(_s.visits&&_s.visits.length)||(_s.messages&&_s.messages.length)||(_s.appts&&_s.appts.length);
+  loadStore();
+  if(!_has){ loadDemo(); }  /* fresh device / empty storage -> auto-load full demo so it works anywhere */
+  initPlatform(); compute();
+});
+</script>
+</body>
+</html>
